@@ -46,8 +46,6 @@ def coord_valid(c: int):
 def print_boards(board, enemy_board):
     """
     Prints the full board including padding, color and spaces directly to stdout.
-
-    Note: Due to use of ANSI Color codes it might not work on windows.
     """
     s = "      Your Board  \t\t       Enemy Board\n\r"
     s += vertical_header + "\t\t" + vertical_header + "\n\r"
@@ -171,22 +169,9 @@ class Shot:
 
 
 class Network:
-    """
-    Network communication protocol using TCP sockets.
-
-    Replace this class for a custom implementation.
-
-    Supports classic instantiation or the use as a context manager.
-    """
     BUFSIZE = 16
 
     def __init__(self, host, port, is_server):
-        """
-        The functionality is basically the same for client and server and only differs slightly.
-        :param host: the host to either connect to (as client) or to open the server in (as server)
-        :param port: the port to connect to (as client) or to open as server
-        :param is_server: True if the returned instance should act as a TCP server.
-        """
         self.is_server = is_server
         self.sock = None
         self.conn = None
@@ -210,10 +195,6 @@ class Network:
         self.sock.send(pkt)
 
     def send(self, pkt):
-        """
-        Send arbitrary  to remote
-        :param pkt: packet as binary data
-        """
         if self.is_server:
             return self._server_send(pkt)
         return self._client_send(pkt)
@@ -237,10 +218,6 @@ class Network:
         return data
 
     def recv(self):
-        """
-        Wait for a packet to arrive.
-        Note: BLOCKING!
-        """
         try:
             if self.is_server:
                 return self._server_recv()
@@ -249,20 +226,14 @@ class Network:
             self.close()
 
     def close(self):
-        """
-        Close the socket and free all resources.
-        Make sure this method is always called (also in case of failure to prevent stuck resources or ports)
-        """
         self.sock.close()
         if self.conn:
             self.conn.close()
 
     def __enter__(self):
-        # enables context manager
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # enables context manager
         self.close()
 
 
@@ -279,7 +250,6 @@ def pre_process_string(s):
 
 
 def parse_shot(s):
-    # be gentle
     s = pre_process_string(s)
     s = s.lower().replace(" ", "")
 
